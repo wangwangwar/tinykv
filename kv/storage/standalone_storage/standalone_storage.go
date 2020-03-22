@@ -46,9 +46,10 @@ func (s *StandAloneStorage) Write(ctx *kvrpcpb.Context, batch []storage.Modify) 
 	batchWrite := new(engine_util.WriteBatch)
 	for i := 0; i < len(batch); i++ {
 		op := batch[i]
-		if op.Type == storage.ModifyTypePut {
+		switch op.Data.(type) {
+		case storage.Put:
 			batchWrite.SetCF(op.Cf(), op.Key(), op.Data.(storage.Put).Value)
-		} else if op.Type == storage.ModifyTypeDelete {
+		case storage.Delete:
 			batchWrite.DeleteCF(op.Cf(), op.Key())
 		}
 	}
